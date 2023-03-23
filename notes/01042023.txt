@@ -1,0 +1,104 @@
+unfortunately, it's been a while, so I need a full recap 
+
+## Time series smoothing 
+
+So, the fundamental model is 
+y ~t = gamma ~t + eps ~t 
+
+then we set
+gamma ~pls  = argmin ~gamma { (y - gamma)'*(y - gamma) + lambda*gamma'*K*gamma }
+
+which has an exact solution, just as in regular regression 
+
+The Bayesian formulation goes as follows:
+
+sampling model:
+y | gamma ~ N {gamma, <sigma,2>*I}
+
+The prior for gamma is constructed in a recursive manner 
+but it turns out to be a partially improper Gaussian prior
+
+now, the posterior turns out to be also Gaussian
+the mean is the same as the mode 
+and hence can be computed by a maximization argument
+and turns out that the thing to maximize is the same term as before 
+with the appropriate choice of parameters, namely 
+lambda = [<sigma,2>, <tau,2>]
+
+we can compute the posterior covariance exactly, 
+which turns out to be 'larger' than the pls covariance 
+
+We can make that model more complicated, either to make it more reallistic 
+or to include non-Gaussian observations, 
+just as GLM are to LM 
+
+## Penalized splines 
+
+The basic problem is 
+y = f^ x + eps 
+
+B-splines, which are defined recursively, starting with step functions 
+they are nice basically because they are local 
+
+The basic setting is the model 
+y = X*gamma + eps 
+
+where X, the deisgn matrix, contains the values of the spline functions 
+it's literally an ordinary regression
+people call it nonparametric 
+
+You can play with a couple of parameters here:
+the number and distribution of the knots 
+and the degree of the polynomials 
+
+to try to avoid overfitting, you can penalize 
+gamma = argmin ~gamma { (y - X*gamma)'*(y - X*gamma) + lambda gamma'*K*gamma }
+where K again has a structure such that it guarantees smoothness of gamma 
+to a given degree 
+
+the Bayesian perspective here is again to define a prior for gamma 
+which is done as a random walk 
+and which yields similar results as before 
+
+there is additionally the question of the parameters sigma and tau 
+we give them IG priors
+which leads to the Gibbs sampler outlined in algorithm 2.1 
+that's where I was last time 
+
+### degrees of freedom 
+
+for a linear smoother, that is, one of the form 
+f^ x = {s x}'*y 
+If we write S for the combination of the s 
+we define 
+df S = tr S 
+
+For P-splines, this varies smoothly from the number of basis functions 
+at lambda=0 to the null of K at lambda=infty 
+
+This generalizes to 
+df = tr F*<F ~pen,-1> 
+where F is the correspoding Fisher information matrix 
+
+In the Bayesian context, df has a distribution, of course 
+
+### non-gaussian 
+
+in frequentist, you set 
+l ~i gamma = p y~i|gamma 
+l ~pen gamma = $ ~i,1,n <| l ~i gamma + [lambda,2]*gamma'*K*gamma 
+
+which leads to expressions for the Fisher iterations
+there is a way to rewrite that expression 
+so that it looks like at each step you're solving a weighted LS problem 
+it's just that the weights and the responses change iteratively 
+
+in bayesian, we use the same smoothing prior as before 
+for a given value of <tau,2>
+the posterior mode again coincides with the frequentist estimate 
+
+in full bayes, we also estimate <tau,2> 
+for which we formulate a IG prior 
+the full conditional for <tau,2> is the same as in the gaussian case 
+but there is no close form for the full conditional of gamma 
+so we do MH, with IWLS proposals 

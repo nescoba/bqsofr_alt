@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Putting the exponentials in the functions</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="exps_in_stan_code_files/libs/clipboard/clipboard.min.js"></script>
+<script src="exps_in_stan_code_files/libs/quarto-html/quarto.js"></script>
+<script src="exps_in_stan_code_files/libs/quarto-html/popper.min.js"></script>
+<script src="exps_in_stan_code_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="exps_in_stan_code_files/libs/quarto-html/anchor.min.js"></script>
+<link href="exps_in_stan_code_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="exps_in_stan_code_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="exps_in_stan_code_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="exps_in_stan_code_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="exps_in_stan_code_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Putting the exponentials in the functions</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="preliminaries" class="level2">
+<h2 class="anchored" data-anchor-id="preliminaries">Preliminaries</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(brms)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: Rcpp</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading 'brms' package (version 2.18.0). Useful instructions
+can be found by typing help('brms'). A more detailed introduction
+to the package is available through vignette('brms_overview').</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'brms'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:stats':
+
+    ar</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2
+──</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ ggplot2 3.4.0      ✔ purrr   1.0.1 
+✔ tibble  3.1.8      ✔ dplyr   1.0.10
+✔ tidyr   1.2.1      ✔ stringr 1.5.0 
+✔ readr   2.1.3      ✔ forcats 0.5.2 
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()</code></pre>
+</div>
+</div>
+<p>Dr.&nbsp;Zoh’s preliminary code. This time, though, we put the exponentials on the definition of the functions.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-------------------------------------------------------------------------------</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#--- Useful functions</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#-- find the root</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#-------------------------------------------------------------------------------</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>GamF <span class="ot">&lt;-</span> <span class="cf">function</span>(gam, p0) {</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>          (<span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="sc">-</span><span class="fu">abs</span>(gam)) <span class="sc">*</span> <span class="fu">exp</span>(.<span class="dv">5</span> <span class="sc">*</span> gam<span class="sc">^</span><span class="dv">2</span>) <span class="sc">-</span> p0)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># optimize(GamF,interval = c(-30,30), p0=1 - 0.05)</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>GamBnd <span class="ot">&lt;-</span> <span class="cf">function</span>(p0) {</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>          Re1 <span class="ot">&lt;-</span> <span class="fu">optimize</span>(GamF, <span class="at">interval =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">30</span>, <span class="dv">30</span>), <span class="at">p0 =</span> <span class="dv">1</span> <span class="sc">-</span> p0)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>          Re2 <span class="ot">&lt;-</span> <span class="fu">optimize</span>(GamF, <span class="at">interval =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">30</span>, <span class="dv">30</span>), <span class="at">p0 =</span> p0)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>          <span class="fu">c</span>(<span class="sc">-</span><span class="fu">abs</span>(Re1<span class="sc">$</span>minimum), <span class="fu">abs</span>(Re2<span class="sc">$</span>minimum), Re1<span class="sc">$</span>objective, Re2<span class="sc">$</span>objective)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>GamBnd <span class="ot">&lt;-</span> <span class="fu">Vectorize</span>(GamBnd, <span class="st">"p0"</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#-------------------------------------------------------------------------------</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#--- Function</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#-------------------------------------------------------------------------------</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#--- Stan function (case 2)</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>tau0 <span class="ot">&lt;-</span> .<span class="dv">1</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>Bd <span class="ot">&lt;-</span> <span class="fu">GamBnd</span>(tau0)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co"># GAL2 &lt;- custom_family(</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="co">#  "GAL2", dpars = c("mu", "sigma","ligam", "tau","gamL","gamU"), links=c("identity","log","identity","identity", rep("identity",2)),</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="co">#  lb=c(NA,0, -1.087,0,NA,NA), ub=c(NA,NA, 1.087,1,NA,NA), type="real") #, vars = "vint1[n]"</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="co"># GAL2 &lt;- custom_family(</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="co">#   "GAL2", dpars = c("mu", "sigma","ligam"), links= c("identity","log","identity"),</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="co">#   lb=c(NA,0, -1.087), ub=c(NA,NA, 1.087), type="real", vars = c("tau","gamL","gamU")) #, vars = "vint1[n]"</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>GAL2 <span class="ot">&lt;-</span> <span class="fu">custom_family</span>(</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>          <span class="st">"GAL2"</span>,</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>          <span class="at">dpars =</span> <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"sigma"</span>, <span class="st">"ligam"</span>, <span class="st">"tau"</span>), <span class="at">links =</span> <span class="fu">c</span>(<span class="st">"identity"</span>, <span class="st">"log"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>),</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>          <span class="at">lb =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="fl">1.086</span>, <span class="dv">0</span>), <span class="at">ub =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">1.086</span>, <span class="dv">1</span>), <span class="at">type =</span> <span class="st">"real"</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>) <span class="co"># , vars = c("tau")) #, vars = "vint1[n]"</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>GAL2 <span class="ot">&lt;-</span> <span class="fu">custom_family</span>(</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>          <span class="st">"GAL2"</span>,</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>          <span class="at">dpars =</span> <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"sigma"</span>, <span class="st">"ligam"</span>, <span class="st">"tau"</span>), <span class="at">links =</span> <span class="fu">c</span>(<span class="st">"identity"</span>, <span class="st">"log"</span>, <span class="st">"logit"</span>, <span class="st">"identity"</span>),</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>          <span class="at">lb =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">15</span>, <span class="dv">0</span>), <span class="at">ub =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">15</span>, <span class="dv">1</span>), <span class="at">type =</span> <span class="st">"real"</span>, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">"gamL"</span>, <span class="st">"gamU"</span>)</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>) <span class="co"># , vars = c("tau")) #, vars = "vint1[n]"</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>GAL2 <span class="ot">&lt;-</span> <span class="fu">custom_family</span>(</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>          <span class="st">"GAL2"</span>,</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>          <span class="at">dpars =</span> <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"sigma"</span>, <span class="st">"ligam"</span>, <span class="st">"tau"</span>, <span class="st">"gamL"</span>, <span class="st">"gamU"</span>), <span class="at">links =</span> <span class="fu">c</span>(<span class="st">"identity"</span>, <span class="st">"log"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>, <span class="fu">rep</span>(<span class="st">"identity"</span>, <span class="dv">2</span>)),</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>          <span class="at">lb =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">15</span>, <span class="dv">0</span>, <span class="cn">NA</span>, <span class="cn">NA</span>), <span class="at">ub =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">15</span>, <span class="dv">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>), <span class="at">type =</span> <span class="st">"real"</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>) <span class="co"># , vars = "vint1[n]"</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>GAL2 <span class="ot">&lt;-</span> <span class="fu">custom_family</span>(</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>          <span class="st">"GAL2"</span>,</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>          <span class="at">dpars =</span> <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"sigma"</span>, <span class="st">"ligam"</span>, <span class="st">"tau"</span>), <span class="at">links =</span> <span class="fu">c</span>(<span class="st">"identity"</span>, <span class="st">"log"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>),</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>          <span class="at">lb =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">0</span>, Bd[<span class="dv">1</span>] <span class="sc">*</span> .<span class="dv">99</span>, <span class="dv">0</span>), <span class="at">ub =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, Bd[<span class="dv">2</span>] <span class="sc">*</span> .<span class="dv">99</span>, <span class="dv">1</span>), <span class="at">type =</span> <span class="st">"real"</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>) <span class="co"># , vars = "vint1[n]"</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>stan_funs2 <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="st">    /*</span></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a><span class="st">    A = -est*p_neg + .5*pow(gam, 2)*pow(p_neg/p_pos, 2) + log(Phi_approx(a2-a3)) + log1m_exp(fabs(log(Phi_approx(a2-a3)) - log(Phi_approx(a2))));</span></span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a><span class="st">  gam = (gamU - gamL) * ligam + gamL;</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="st">  real gam = (gamU - gamL) * ligam + gamL;</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a><span class="st">  real GAL2_lpdf(real y, real mu, real sigma, real ligam, real tau, real gamL, real gamU){</span></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a><span class="st">  real GAL2_rng(real mu, real sigma, real ligam, real tau, real gamL, real gamU){</span></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a><span class="st">   */</span></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a><span class="st">     /* helper function for asym_laplace_lpdf</span></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a><span class="st">  * Args:</span></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a><span class="st">    *   y: the response value</span></span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a><span class="st">  *   tau: quantile parameter in (0, 1)</span></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a><span class="st">  */</span></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a><span class="st">    real rho_quantile(real y, real tau) {</span></span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a><span class="st">      if (y &lt; 0) {</span></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a><span class="st">        return y * (tau - 1);</span></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a><span class="st">      } else {</span></span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a><span class="st">        return y * tau;</span></span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a><span class="st">      }</span></span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a><span class="st">  /* asymmetric laplace log-PDF for a single response</span></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a><span class="st">  * Args:</span></span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a><span class="st">    *   y: the response value</span></span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a><span class="st">  *   mu: location parameter</span></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a><span class="st">  *   sigma: positive scale parameter</span></span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a><span class="st">  *   tau: quantile parameter in (0, 1)</span></span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a><span class="st">  * Returns:</span></span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a><span class="st">    *   a scalar to be added to the log posterior</span></span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a><span class="st">  */</span></span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a><span class="st">    real asym_laplace_lpdf(real y, real mu, real logsigma, real tau) {</span></span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a><span class="st">      return log(tau * (1 - tau)) -</span></span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a><span class="st">        logsigma -</span></span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a><span class="st">        rho_quantile((y - mu) / exp(logsigma), tau);</span></span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a><span class="st">  /* asymmetric laplace log-CDF for a single quantile</span></span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a><span class="st">  * Args:</span></span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a><span class="st">    *   y: a quantile</span></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a><span class="st">  *   mu: location parameter</span></span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a><span class="st">  *   sigma: positive scale parameter</span></span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a><span class="st">  *   tau: quantile parameter in (0, 1)</span></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a><span class="st">  * Returns:</span></span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a><span class="st">    *   a scalar to be added to the log posterior</span></span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a><span class="st">  */</span></span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a><span class="st">    real asym_laplace_lcdf(real y, real mu, real logsigma, real tau) {</span></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a><span class="st">      if (y &lt; mu) {</span></span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a><span class="st">        return log(tau) + (1 - tau) * (y - mu) / exp(logsigma);</span></span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a><span class="st">      } else {</span></span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a><span class="st">        return log1m((1 - tau) * exp(-tau * (y - mu) / exp(logsigma)));</span></span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a><span class="st">      }</span></span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a><span class="st">  /* asymmetric laplace log-CCDF for a single quantile</span></span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a><span class="st">  * Args:</span></span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a><span class="st">    *   y: a quantile</span></span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a><span class="st">  *   mu: location parameter</span></span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a><span class="st">  *   sigma: positive scale parameter</span></span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a><span class="st">  *   tau: quantile parameter in (0, 1)</span></span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a><span class="st">  * Returns:</span></span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a><span class="st">    *   a scalar to be added to the log posterior</span></span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a><span class="st">  */</span></span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a><span class="st">    real asym_laplace_lccdf(real y, real mu, real logsigma, real tau) {</span></span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a><span class="st">      if (y &lt; mu) {</span></span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a><span class="st">        return log1m(tau * exp((1 - tau) * (y - mu) / exp(logsigma)));</span></span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a><span class="st">      } else {</span></span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a><span class="st">        return log1m(tau) - tau * (y - mu) / exp(logsigma);</span></span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a><span class="st">      }</span></span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a><span class="st">   real GAL2_lpdf(real y, real mu, real logsigma, real ligam, real tau){</span></span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a><span class="st">   real p_pos;</span></span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a><span class="st">   real p_neg;</span></span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a><span class="st">   real a3;</span></span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a><span class="st">   real a2;</span></span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a><span class="st">   real p;</span></span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a><span class="st">   real est;</span></span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a><span class="st">   real A;</span></span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a><span class="st">   real B;</span></span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a><span class="st">   real Res = 0;</span></span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a><span class="st">   real gam = ligam;</span></span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a><span class="st">    p = (gam &lt; 0) + (tau - (gam &lt; 0))/(2*Phi(-fabs(gam))*exp(.5*pow(gam, 2)));</span></span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a><span class="st">    p_pos = p -  (gam &gt; 0);</span></span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a><span class="st">    p_neg = p -  (gam &lt; 0);</span></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a><span class="st">    est = (y - mu) / exp(logsigma);</span></span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a><span class="st">    if(fabs(gam) &gt; 0){</span></span>
+<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a><span class="st">    a3 = p_pos * (est / fabs(gam));</span></span>
+<span id="cb9-143"><a href="#cb9-143" aria-hidden="true" tabindex="-1"></a><span class="st">    a2 = fabs(gam) * (p_neg / p_pos);</span></span>
+<span id="cb9-144"><a href="#cb9-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-145"><a href="#cb9-145" aria-hidden="true" tabindex="-1"></a><span class="st">    if(est/gam &gt; 0){</span></span>
+<span id="cb9-146"><a href="#cb9-146" aria-hidden="true" tabindex="-1"></a><span class="st">      A =  0.5*pow(gam, 2)*pow(p_neg/p_pos, 2) - est*p_neg + log_diff_exp(log(Phi_approx(a2-a3)), log(Phi_approx(a2)) );</span></span>
+<span id="cb9-147"><a href="#cb9-147" aria-hidden="true" tabindex="-1"></a><span class="st">      B =  0.5*pow(gam, 2) - p_pos*est + log(Phi_approx(-fabs(gam) + a3));</span></span>
+<span id="cb9-148"><a href="#cb9-148" aria-hidden="true" tabindex="-1"></a><span class="st">      Res = log(2*p*(1-p)) - logsigma +  log_sum_exp(A, B);</span></span>
+<span id="cb9-149"><a href="#cb9-149" aria-hidden="true" tabindex="-1"></a><span class="st">    }else{</span></span>
+<span id="cb9-150"><a href="#cb9-150" aria-hidden="true" tabindex="-1"></a><span class="st">      Res =  log(2*p*(1-p)) - logsigma - p_pos * est + 0.5 * pow(gam, 2) + log(Phi_approx(-fabs(gam) ));</span></span>
+<span id="cb9-151"><a href="#cb9-151" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-152"><a href="#cb9-152" aria-hidden="true" tabindex="-1"></a><span class="st">    }else{</span></span>
+<span id="cb9-153"><a href="#cb9-153" aria-hidden="true" tabindex="-1"></a><span class="st">    Res = asym_laplace_lpdf( y | mu, exp(logsigma), tau);</span></span>
+<span id="cb9-154"><a href="#cb9-154" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-155"><a href="#cb9-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-156"><a href="#cb9-156" aria-hidden="true" tabindex="-1"></a><span class="st">    return Res;</span></span>
+<span id="cb9-157"><a href="#cb9-157" aria-hidden="true" tabindex="-1"></a><span class="st">   }</span></span>
+<span id="cb9-158"><a href="#cb9-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-159"><a href="#cb9-159" aria-hidden="true" tabindex="-1"></a><span class="st">  real GAL2_rng(real mu, real logsigma, real ligam, real tau){</span></span>
+<span id="cb9-160"><a href="#cb9-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-161"><a href="#cb9-161" aria-hidden="true" tabindex="-1"></a><span class="st">     real A;</span></span>
+<span id="cb9-162"><a href="#cb9-162" aria-hidden="true" tabindex="-1"></a><span class="st">     real B;</span></span>
+<span id="cb9-163"><a href="#cb9-163" aria-hidden="true" tabindex="-1"></a><span class="st">     real C;</span></span>
+<span id="cb9-164"><a href="#cb9-164" aria-hidden="true" tabindex="-1"></a><span class="st">     real p;</span></span>
+<span id="cb9-165"><a href="#cb9-165" aria-hidden="true" tabindex="-1"></a><span class="st">     real hi;</span></span>
+<span id="cb9-166"><a href="#cb9-166" aria-hidden="true" tabindex="-1"></a><span class="st">     real nui;</span></span>
+<span id="cb9-167"><a href="#cb9-167" aria-hidden="true" tabindex="-1"></a><span class="st">     real mui=0;</span></span>
+<span id="cb9-168"><a href="#cb9-168" aria-hidden="true" tabindex="-1"></a><span class="st">     real Up = uniform_rng(.5, 1.0);</span></span>
+<span id="cb9-169"><a href="#cb9-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-170"><a href="#cb9-170" aria-hidden="true" tabindex="-1"></a><span class="st">     real gam = ligam;</span></span>
+<span id="cb9-171"><a href="#cb9-171" aria-hidden="true" tabindex="-1"></a><span class="st">     p = (gam &lt; 0) + (tau - (gam &lt; 0))/(2*Phi_approx(-fabs(gam))*exp(.5*pow(gam, 2)));</span></span>
+<span id="cb9-172"><a href="#cb9-172" aria-hidden="true" tabindex="-1"></a><span class="st">     A = (1 - 2*p)/(p - pow(p,2));</span></span>
+<span id="cb9-173"><a href="#cb9-173" aria-hidden="true" tabindex="-1"></a><span class="st">     B = 2/(p - pow(p,2));</span></span>
+<span id="cb9-174"><a href="#cb9-174" aria-hidden="true" tabindex="-1"></a><span class="st">     C = 1/((gam &gt; 0) - p);</span></span>
+<span id="cb9-175"><a href="#cb9-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-176"><a href="#cb9-176" aria-hidden="true" tabindex="-1"></a><span class="st">      hi = exp(logsigma) * inv_Phi(Up);</span></span>
+<span id="cb9-177"><a href="#cb9-177" aria-hidden="true" tabindex="-1"></a><span class="st">     nui = exp(logsigma) * exponential_rng(1);</span></span>
+<span id="cb9-178"><a href="#cb9-178" aria-hidden="true" tabindex="-1"></a><span class="st">     mui += mu + A * nui + C * fabs(gam) * hi;</span></span>
+<span id="cb9-179"><a href="#cb9-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-180"><a href="#cb9-180" aria-hidden="true" tabindex="-1"></a><span class="st">     return normal_rng(mui, sqrt(exp(logsigma)*B*nui));</span></span>
+<span id="cb9-181"><a href="#cb9-181" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb9-182"><a href="#cb9-182" aria-hidden="true" tabindex="-1"></a><span class="st">  "</span></span>
+<span id="cb9-183"><a href="#cb9-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-184"><a href="#cb9-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-185"><a href="#cb9-185" aria-hidden="true" tabindex="-1"></a><span class="co">#--- Now define all of these here</span></span>
+<span id="cb9-186"><a href="#cb9-186" aria-hidden="true" tabindex="-1"></a><span class="co"># stanvars &lt;- stanvar(scode = stan_funs, block = "functions")</span></span>
+<span id="cb9-187"><a href="#cb9-187" aria-hidden="true" tabindex="-1"></a>stanvars2 <span class="ot">&lt;-</span> <span class="fu">stanvar</span>(<span class="at">scode =</span> stan_funs2, <span class="at">block =</span> <span class="st">"functions"</span>)</span>
+<span id="cb9-188"><a href="#cb9-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-189"><a href="#cb9-189" aria-hidden="true" tabindex="-1"></a><span class="co"># priorval = c(prior(normal(0, 15), class = "Intercept"),</span></span>
+<span id="cb9-190"><a href="#cb9-190" aria-hidden="true" tabindex="-1"></a><span class="co">#           # Prior guess of 80% of the terms are non-zero</span></span>
+<span id="cb9-191"><a href="#cb9-191" aria-hidden="true" tabindex="-1"></a><span class="co">#           prior(horseshoe(par_ratio =0.8), class = "b"))</span></span>
+<span id="cb9-192"><a href="#cb9-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-193"><a href="#cb9-193" aria-hidden="true" tabindex="-1"></a><span class="co">#--- Fit the quantile regression</span></span>
+<span id="cb9-194"><a href="#cb9-194" aria-hidden="true" tabindex="-1"></a><span class="co">#-- quantile</span></span>
+<span id="cb9-195"><a href="#cb9-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-196"><a href="#cb9-196" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_fakeq.5 &lt;- brms::brm(bf(as.formula(form), quantile = .5), data = df_sampleWt, family = asym_laplace(), prior = set_prior(horseshoe(df=1,par_ratio = 0.1), class="b"))</span></span>
+<span id="cb9-197"><a href="#cb9-197" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_fakeq.5 &lt;- brms::brm(bf(as.formula(form), quantile = .5), data = df_sampleWt, family = asym_laplace())</span></span>
+<span id="cb9-198"><a href="#cb9-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-199"><a href="#cb9-199" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_fakeqGal.5 &lt;- brms::brm(bf(as.formula(form), tau = .5, gamL = Bd[1], gamU = Bd[2]), data = df_sampleWt, family = GAL,</span></span>
+<span id="cb9-200"><a href="#cb9-200" aria-hidden="true" tabindex="-1"></a><span class="co">#                             stanvars = stanvars,chains = 3,iter = 10000, control = list(adapt_delta = 0.97, max_treedepth = 10))</span></span>
+<span id="cb9-201"><a href="#cb9-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-202"><a href="#cb9-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-203"><a href="#cb9-203" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_fakeqGal2.5 &lt;- brms::brm(bf(as.formula(form), tau = .5, gamL = Bd[1], gamU = Bd[2]), data = df_sampleWt, family = GAL2, stanvars = stanvars2,chains = 3,iter = 1000)</span></span>
+<span id="cb9-204"><a href="#cb9-204" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_fakeqGal2.5 &lt;- brms::brm(bf(as.formula(form), tau = .5,gamL = Bd[1], gamU = Bd[2]), data = df_sampleWt, family = GAL2, stanvars = stanvars2,chains = 2,iter = 2000, init = 0.1, control = list(adapt_delta = 0.97))</span></span>
+<span id="cb9-205"><a href="#cb9-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-206"><a href="#cb9-206" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_fakeqGal2.5 &lt;- brms::brm(bf(as.formula(form), tau = tau0), data = df_sampleWt, family = GAL2, stanvars = stanvars2,chains = 2,iter = 5000, control = list(adapt_delta = 0.97)) # init = 0.1,</span></span>
+<span id="cb9-207"><a href="#cb9-207" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_fakeqGal2.9 &lt;- brms::brm(bf(as.formula(form), tau = tau0), data = df_sampleWt, family = GAL2, stanvars = stanvars2,chains = 2,iter = 5000, control = list(adapt_delta = 0.97)) # init = 0.1,</span></span>
+<span id="cb9-208"><a href="#cb9-208" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_fakeqGal2.1 &lt;- brms::brm(bf(as.formula(form), tau = tau0), data = df_sampleWt, family = GAL2, stanvars = stanvars2,chains = 2,iter = 5000, control = list(adapt_delta = 0.97)) # init = 0.1,</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Generating synthethic data with mean 0 and <span class="math inline">\(\mathrm{sd} = x\)</span></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(N, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> x)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>synthetic <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="experimenting" class="level2">
+<h2 class="anchored" data-anchor-id="experimenting">Experimenting</h2>
+<p>Original model</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Bd <span class="ot">&lt;-</span> <span class="fu">GamBnd</span>(.<span class="dv">5</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>GAL2 <span class="ot">&lt;-</span> <span class="fu">custom_family</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"GAL2"</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">dpars =</span> <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"logsigma"</span>, <span class="st">"ligam"</span>, <span class="st">"tau"</span>), <span class="at">links =</span> <span class="fu">c</span>(<span class="st">"identity"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">lb =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, Bd[<span class="dv">1</span>] <span class="sc">*</span> .<span class="dv">99</span>, <span class="dv">0</span>), <span class="at">ub =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, Bd[<span class="dv">2</span>] <span class="sc">*</span> .<span class="dv">99</span>, <span class="dv">1</span>), <span class="at">type =</span> <span class="st">"real"</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>q50 <span class="ot">&lt;-</span> <span class="fu">brm</span>(<span class="fu">bf</span>(y <span class="sc">~</span> x, logsigma <span class="sc">~</span> <span class="fu">log</span>(x) <span class="sc">-</span> <span class="dv">1</span>, <span class="at">tau =</span> .<span class="dv">5</span>), <span class="at">data =</span> synthetic, <span class="at">family =</span> GAL2, <span class="at">stanvars =</span> stanvars2, <span class="at">chains =</span> <span class="dv">2</span>, <span class="at">iter =</span> <span class="dv">500</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.99</span>), <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">123</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Compiling Stan program...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Start sampling</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 241 divergent transitions after warmup. See
+https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+to find out why this is a problem and how to eliminate them.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 197 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
+https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The largest R-hat is NA, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#r-hat</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#bulk-ess</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#tail-ess</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Parts of the model have not converged (some Rhats are &gt; 1.05). Be
+careful when analysing the results! We recommend running more iterations and/or
+setting stronger priors.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 241 divergent transitions after warmup. Increasing
+adapt_delta above 0.99 may help. See
+http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: GAL2 
+  Links: mu = identity; logsigma = identity; ligam = identity; tau = identity 
+Formula: y ~ x 
+         logsigma ~ log(x) - 1
+         tau = 0.5
+   Data: synthetic (Number of observations: 1000) 
+  Draws: 2 chains, each with iter = 500; warmup = 250; thin = 1;
+         total post-warmup draws = 500
+
+Population-Level Effects: 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept         0.00      0.00    -0.00     0.00 1.01      140      308
+x                 0.00      0.04    -0.07     0.07 1.20        8       33
+logsigma_logx     1.32      0.01     1.29     1.34 1.41        5       11
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+ligam     0.20      0.01     0.18     0.22 1.67        3       11
+tau       0.50      0.00     0.50     0.50   NA       NA       NA
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The following parameters were dropped because they are constant: tau</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="second-attempt" class="level2">
+<h2 class="anchored" data-anchor-id="second-attempt">Second attempt</h2>
+<p>Not fitting location</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>Bd <span class="ot">&lt;-</span> <span class="fu">GamBnd</span>(.<span class="dv">5</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>GAL2 <span class="ot">&lt;-</span> <span class="fu">custom_family</span>(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"GAL2"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">dpars =</span> <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"logsigma"</span>, <span class="st">"ligam"</span>, <span class="st">"tau"</span>), <span class="at">links =</span> <span class="fu">c</span>(<span class="st">"identity"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">lb =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, Bd[<span class="dv">1</span>] <span class="sc">*</span> .<span class="dv">99</span>, <span class="dv">0</span>), <span class="at">ub =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, Bd[<span class="dv">2</span>] <span class="sc">*</span> .<span class="dv">99</span>, <span class="dv">1</span>), <span class="at">type =</span> <span class="st">"real"</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>q50 <span class="ot">&lt;-</span> <span class="fu">brm</span>(<span class="fu">bf</span>(y <span class="sc">~</span> <span class="dv">1</span>, logsigma <span class="sc">~</span> <span class="fu">log</span>(x) <span class="sc">-</span> <span class="dv">1</span>, <span class="at">tau =</span> .<span class="dv">5</span>), <span class="at">data =</span> synthetic, <span class="at">family =</span> GAL2, <span class="at">stanvars =</span> stanvars2, <span class="at">chains =</span> <span class="dv">2</span>, <span class="at">iter =</span> <span class="dv">500</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.99</span>), <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">123</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Compiling Stan program...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Start sampling</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 434 divergent transitions after warmup. See
+https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+to find out why this is a problem and how to eliminate them.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
+https://mc-stan.org/misc/warnings.html#bfmi-low</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The largest R-hat is NA, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#r-hat</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#bulk-ess</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#tail-ess</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Parts of the model have not converged (some Rhats are &gt; 1.05). Be
+careful when analysing the results! We recommend running more iterations and/or
+setting stronger priors.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 434 divergent transitions after warmup. Increasing
+adapt_delta above 0.99 may help. See
+http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: GAL2 
+  Links: mu = identity; logsigma = identity; ligam = identity; tau = identity 
+Formula: y ~ 1 
+         logsigma ~ log(x) - 1
+         tau = 0.5
+   Data: synthetic (Number of observations: 1000) 
+  Draws: 2 chains, each with iter = 500; warmup = 250; thin = 1;
+         total post-warmup draws = 500
+
+Population-Level Effects: 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept        -0.00      0.00    -0.00     0.00 1.84        3       13
+logsigma_logx     1.09      0.05     1.03     1.14 2.25        3       15
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+ligam    -0.00      0.09    -0.09     0.09 2.31        3       14
+tau       0.50      0.00     0.50     0.50   NA       NA       NA
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The following parameters were dropped because they are constant: tau</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="third-attempt" class="level2">
+<h2 class="anchored" data-anchor-id="third-attempt">Third attempt</h2>
+<p>not fitting location and not using logs on the RHS</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>Bd <span class="ot">&lt;-</span> <span class="fu">GamBnd</span>(.<span class="dv">5</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>GAL2 <span class="ot">&lt;-</span> <span class="fu">custom_family</span>(</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"GAL2"</span>,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">dpars =</span> <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"logsigma"</span>, <span class="st">"ligam"</span>, <span class="st">"tau"</span>), <span class="at">links =</span> <span class="fu">c</span>(<span class="st">"identity"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>),</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">lb =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, Bd[<span class="dv">1</span>] <span class="sc">*</span> .<span class="dv">99</span>, <span class="dv">0</span>), <span class="at">ub =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, Bd[<span class="dv">2</span>] <span class="sc">*</span> .<span class="dv">99</span>, <span class="dv">1</span>), <span class="at">type =</span> <span class="st">"real"</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>q50 <span class="ot">&lt;-</span> <span class="fu">brm</span>(<span class="fu">bf</span>(y <span class="sc">~</span> <span class="dv">1</span>, logsigma <span class="sc">~</span> x <span class="sc">-</span> <span class="dv">1</span>, <span class="at">tau =</span> .<span class="dv">5</span>), <span class="at">data =</span> synthetic, <span class="at">family =</span> GAL2, <span class="at">stanvars =</span> stanvars2, <span class="at">chains =</span> <span class="dv">2</span>, <span class="at">iter =</span> <span class="dv">500</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.99</span>), <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">123</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Compiling Stan program...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Start sampling</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 485 divergent transitions after warmup. See
+https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+to find out why this is a problem and how to eliminate them.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
+https://mc-stan.org/misc/warnings.html#bfmi-low</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The largest R-hat is NA, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#r-hat</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#bulk-ess</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#tail-ess</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Parts of the model have not converged (some Rhats are &gt; 1.05). Be
+careful when analysing the results! We recommend running more iterations and/or
+setting stronger priors.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 485 divergent transitions after warmup. Increasing
+adapt_delta above 0.99 may help. See
+http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: GAL2 
+  Links: mu = identity; logsigma = identity; ligam = identity; tau = identity 
+Formula: y ~ 1 
+         logsigma ~ x - 1
+         tau = 0.5
+   Data: synthetic (Number of observations: 1000) 
+  Draws: 2 chains, each with iter = 500; warmup = 250; thin = 1;
+         total post-warmup draws = 500
+
+Population-Level Effects: 
+           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept      0.13      0.02     0.07     0.16 1.30        6       13
+logsigma_x    -1.05      0.25    -1.36    -0.75 2.99        2       12
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+ligam    -0.21      0.04    -0.26    -0.16 2.94        2       12
+tau       0.50      0.00     0.50     0.50   NA       NA       NA
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The following parameters were dropped because they are constant: tau</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="fourth-attempt" class="level2">
+<h2 class="anchored" data-anchor-id="fourth-attempt">Fourth attempt</h2>
+<p>Not fitting location and fitting a smooth function</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>Bd <span class="ot">&lt;-</span> <span class="fu">GamBnd</span>(.<span class="dv">5</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>GAL2 <span class="ot">&lt;-</span> <span class="fu">custom_family</span>(</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"GAL2"</span>,</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">dpars =</span> <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"logsigma"</span>, <span class="st">"ligam"</span>, <span class="st">"tau"</span>), <span class="at">links =</span> <span class="fu">c</span>(<span class="st">"identity"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>, <span class="st">"identity"</span>),</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">lb =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, Bd[<span class="dv">1</span>] <span class="sc">*</span> .<span class="dv">99</span>, <span class="dv">0</span>), <span class="at">ub =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, Bd[<span class="dv">2</span>] <span class="sc">*</span> .<span class="dv">99</span>, <span class="dv">1</span>), <span class="at">type =</span> <span class="st">"real"</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>q50 <span class="ot">&lt;-</span> <span class="fu">brm</span>(<span class="fu">bf</span>(y <span class="sc">~</span> <span class="dv">1</span>, logsigma <span class="sc">~</span> <span class="fu">s</span>(x), <span class="at">tau =</span> .<span class="dv">5</span>), <span class="at">data =</span> synthetic, <span class="at">family =</span> GAL2, <span class="at">stanvars =</span> stanvars2, <span class="at">chains =</span> <span class="dv">2</span>, <span class="at">iter =</span> <span class="dv">500</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.99</span>), <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">123</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Compiling Stan program...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Start sampling</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 500 divergent transitions after warmup. See
+https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+to find out why this is a problem and how to eliminate them.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
+https://mc-stan.org/misc/warnings.html#bfmi-low</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The largest R-hat is NA, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#r-hat</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#bulk-ess</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#tail-ess</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Parts of the model have not converged (some Rhats are &gt; 1.05). Be
+careful when analysing the results! We recommend running more iterations and/or
+setting stronger priors.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 500 divergent transitions after warmup. Increasing
+adapt_delta above 0.99 may help. See
+http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: GAL2 
+  Links: mu = identity; logsigma = identity; ligam = identity; tau = identity 
+Formula: y ~ 1 
+         logsigma ~ s(x)
+         tau = 0.5
+   Data: synthetic (Number of observations: 1000) 
+  Draws: 2 chains, each with iter = 500; warmup = 250; thin = 1;
+         total post-warmup draws = 500
+
+Smooth Terms: 
+                   Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sds(logsigma_sx_1)     0.47      0.26     0.21     0.74 2.78        2       25
+
+Population-Level Effects: 
+                   Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept             -0.00      0.01    -0.03     0.01 1.43        4       92
+logsigma_Intercept    -1.50      0.38    -1.90    -0.76 2.46        3       11
+logsigma_sx_1          3.29      2.23     1.04     6.01 2.39        3       13
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+ligam    -0.06      0.17    -0.24     0.13 2.75        2       11
+tau       0.50      0.00     0.50     0.50   NA       NA       NA
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-14-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(q50)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The following parameters were dropped because they are constant: tau</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>msms <span class="ot">&lt;-</span> <span class="fu">conditional_smooths</span>(q50)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(msms)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="exps_in_stan_code_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

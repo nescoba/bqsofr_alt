@@ -1,0 +1,75 @@
+---
+title: "Research Group Presentation"
+format: 
+  beamer:
+    incremental: true
+editor: visual
+---
+
+# Overview of Bayesian analysis
+
+## Motivating example: Likelihood
+
+-   Suppose $X_1, \ldots, X_n$ is an i.i.d. sample with $X_i \sim \mathrm{Exp}(\lambda)$. We would like to estimate $\lambda$.
+
+-   Likelihood approach: $$
+      \hat \lambda_{\mathrm{MLE}} = \frac{n}{\sum_i x_i}  
+      $$ $$
+      I(\lambda) = \lambda^{-2} 
+      $$
+
+-   If $z{.025} = \mathrm{qnorm}(.975)$, then approximately and for large $n$, the interval $$\left( \hat \lambda_{\mathrm{MLE}} -   \frac{z_{.025}\lambda_{\mathrm{MLE}}}{\sqrt{n}}, \hat \lambda_{\mathrm{MLE}} -   \frac{z_{.025}\lambda_{\mathrm{MLE}}}{\sqrt{n}} \right) $$
+
+    has $95\%$ coverage, meaning if we repeat the experiment 100 times, the interval will contain the true value of $\lambda$ in roughly 95 of them.
+
+## Motivating example: Bayesian
+
+-   Think of $\lambda$ as a quantity with its own distribution
+-   Prior distribution: $p(\lambda) = \mathrm{Gamma}(\lambda, \alpha, \beta)$
+-   Bayes' theorem: $$
+      \pi(\lambda,\mathbf x) \propto L(\lambda) p(\lambda)
+      $$ $$
+      = \mathrm{Gamma}(\lambda, \alpha + n, \beta + n\bar x)
+      $$
+-   Based on this we can construct an interval $I$ such that we can literally say "$\lambda$ has a $95\%$ chance of being in $I$"
+
+# Quantile regression
+
+## General Framework
+
+-   OLS regression: $E[Y|\mathbf X] = \mathbf X^T \symbf \beta$
+-   Quantile regression: $q_p(Y |\mathbf X) = \mathbf X^T \symbf \beta(p)$
+-   Frequentist approach: $$\hat {\symbf \beta(p)} = \operatorname{argmin}_{\symbf \beta} \sum_i \rho_p(y_i - \mathbf x^T_i \symbf \beta)$$ where $\rho_p(u) = u(p - \mathbf{1}_{\lbrace u<0\rbrace})$
+
+## Bayesian quantile regression with AL
+
+-   It can be shown that the previous minimization problem is equivalent to maximizing the likelihood associated to the distribution $$f^{\mathrm{AL}}_p(u) = p(1 -p)\exp(-\rho_p(u))$$
+-   More generally, we can add a location and a scale parameter: $$f^{\mathrm{AL}}_p(u|\mu, \sigma) = p(1 -p)\exp(-\rho_p((u - \mu)/\sigma))$$ this distribution is called \textit{asymmetric Laplace} \[Yu and Moyeed, 2001\]
+-   Prior: $p(\symbf \beta) \propto 1$ (improper)
+-   Theorem: This leads to a proper posterior distribution
+
+## Flexible quantile regression with GAL
+
+-   Problems: AL is very rigid
+    -   Skewness is determined by $p$, in particular it is symmetric at $p = .5$
+    -   Mode is always at 0
+-   Solution \[Yan and Kottas, 2017\]:
+    -   We can write $$f_p^{\mathrm{AL}}(y|\mu, \sigma) = \int_{\mathbb{R}} N(y| \mu +\sigma A(p)z, \sigma^2B(p)z) Exp(z|1) dz$$
+    -   So, let us add a parameter $$f_p^{\mathrm{GAL}}(y|\mu, \sigma) $$ $$= \int_{\mathbb{R}} N(y| \mu +\sigma \alpha s + \sigma A(p)z, \sigma^2B(p)z) Exp(z|1)N^+(s|0,1) dzds$$
+
+# Parameter Estimation
+
+## Overview of Stan
+
+-   Likelyhood above is very complicated, so sampling from the posterior distribution of parameters becomes an issue
+-   Usually, we deal with this using Markov Chain Monte Carlo (MCMC) techniques
+-   Coding MCMCs by hand is cumbersome. It can also lead to convergence issues
+-   Software packages like BUGS and JAGS can automatically code MCMCs based on model structure
+-   Stan \[Stan development team, 2012\] improves on those packages by implementing HMC and NUTS
+
+## Overview of BRMS
+
+-   Stan is low level: it's a programming language on it's own, built on top of C++
+-   BRMS \[Buckner, 2017\] is a high level interface for Stan on R
+    -   It uses the same formula syntax as `lme4`
+    -   Under the hood, it automatically generates and compiles Stan code, which we can retrieve

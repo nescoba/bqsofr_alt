@@ -1,0 +1,103 @@
+---
+title: "Research Group Presentation"
+format: 
+  beamer:
+    incremental: true
+editor: visual
+author: Nicolas Escobar, Annie Yu, Roger Zoh
+---
+
+# Overview of Bayesian analysis
+
+## Motivating example: Likelihood
+
+-   Suppose we have Data
+-   Choose our model $\rightarrow$ likelihood $\rightarrow$ $\ell(Data | \Theta)$
+-   Find point estimates of $\Theta$ and Extra-step for uncertainty (Asymptotic theory/Bootstrap/etc.)
+-   Go Bayesian
+
+$$P(\Theta|Data) \propto \ell(Data | \Theta)P(\Theta)$$ - Advantages - Full joint distribution for $\Theta$ - You can do virtually everything - Pooling (full/Partial/and no)
+
+# Parameter Estimation
+
+## Overview of Stan
+
+-   Likelihood above can be very complicated, so sampling from the posterior distribution of parameters becomes an issue
+-   Usually, we deal with this using Markov Chain Monte Carlo (MCMC) techniques
+-   Coding MCMCs by hand is cumbersome. It can also lead to convergence issues
+-   Software packages like BUGS and JAGS can automatically code MCMCs based on model structure
+-   Stan \[Stan development team, 2012\] improves on those packages by implementing HMC and NUTS
+-   Still need to becareful about your prior and even your model structure
+
+------------------------------------------------------------------------
+
+## Overview of BRMS
+
+-   Stan is low level: it's a programming language on it's own, built on top of C++
+-   BRMS \[Buckner, 2017\] is a high level interface for Stan on R
+-   It uses the same formula syntax as `lme4`
+-   Under the hood, it automatically generates and compiles Stan code, which we can retrieve
+
+# Quantile regression
+
+## General Framework
+
+-   OLS regression: $E[Y|\mathbf X] = \mathbf X^T \symbf \beta$
+-   Quantile regression: $q_p(Y |\mathbf X) = \mathbf X^T \symbf \beta(p)$
+-   Frequentist approach: $$\hat {\symbf \beta(p)} = \operatorname{argmin}_{\symbf \beta} \sum_i \rho_p(y_i - \mathbf x^T_i \symbf \beta)$$ where $\rho_p(u) = u(p - \mathbf{1}_{\lbrace u<0\rbrace})$
+
+------------------------------------------------------------------------
+
+## Bayesian quantile regression with AL
+
+-   It can be shown that the previous minimization problem is equivalent to maximizing the likelihood associated to the distribution $$f^{\mathrm{AL}}_p(u) = p(1 -p)\exp(-\rho_p(u))$$
+-   More generally, we can add a location and a scale parameter: $$f^{\mathrm{AL}}_p(u|\mu, \sigma) = p(1 -p)\exp(-\rho_p((u - \mu)/\sigma))$$ this distribution is called \textit{asymmetric Laplace} \[Yu and Moyeed, 2001\]
+-   Prior: $p(\symbf \beta) \propto 1$ (improper)
+-   This leads to a proper posterior distribution (only after some additional post-analysis steps)
+
+------------------------------------------------------------------------
+
+## Flexible quantile regression with GAL
+
+-   Problems: AL is very rigid
+    -   Skewness is determined by $p$, in particular it is symmetric at $p = .5$
+    -   Mode is always at 0
+-   Solution \[Yan and Kottas, 2017\]:
+    -   We can write $$f_p^{\mathrm{AL}}(y|\mu, \sigma) = \int_{\mathbb{R}} N(y| \mu +\sigma A(p)z, \sigma^2B(p)z) Exp(z|1) dz$$
+    -   So, let us add a parameter $$f_p^{\mathrm{GAL}}(y|\mu, \sigma) $$ $$= \int_{\mathbb{R}} N(y| \mu +\sigma \alpha s + \sigma A(p)z, \sigma^2B(p)z) Exp(z|1)N^+(s|0,1) dzds$$
+    -   We even allow for a mixture of GAL as a likelihood (Dirichlet process mixture)
+
+---
+
+![](BQSoFRReg.png)
+
+---
+
+# Project we are working on
+
+-   \textcolor{green}{Bayesian quantile regression with functional covariates with ME using GAL}
+-   \textcolor{magenta}{Bayesian quantile regression with functional covariates with ME using GAL with variance function }
+-   \textcolor{yellow}{Bayesian quantile regression with censored outcomes}
+-   \textcolor{yellow}{A Bayesian medation model with multiple outcome, latent mediator and a function covariate measured with error}
+
+<!-- ## Overview of Stan -->
+
+<!-- -   Likelyhood above is very complicated, so sampling from the posterior distribution of parameters becomes an issue -->
+
+<!-- -   Usually, we deal with this using Markov Chain Monte Carlo (MCMC) techniques -->
+
+<!-- -   Coding MCMCs by hand is cumbersome. It can also lead to convergence issues -->
+
+<!-- -   Software packages like BUGS and JAGS can automatically code MCMCs based on model structure -->
+
+<!-- -   Stan \[Stan development team, 2012\] improves on those packages by implementing HMC and NUTS -->
+
+<!-- ## Overview of BRMS -->
+
+<!-- -   Stan is low level: it's a programming language on it's own, built on top of C++ -->
+
+<!-- -   BRMS \[Buckner, 2017\] is a high level interface for Stan on R -->
+
+<!--     -   It uses the same formula syntax as `lme4` -->
+
+<!--     -   Under the hood, it automatically generates and compiles Stan code, which we can retrieve -->

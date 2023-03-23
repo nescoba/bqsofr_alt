@@ -1,0 +1,485 @@
+---
+title: "Exploring brms capabilities"
+format: 
+    html: 
+        code-fold: true
+---
+
+Dr. Zoh asked in a previous meeting what would happen if we used the `s` capabilities of the brms package. Moreover, he wanted to see what happened if we changed the `bs` argument when fitting the function. In both cases, it would be interesting to see the generated Stan code. 
+
+## Preliminaries
+
+```{r}
+library(brms)
+library(tidyverse)
+```
+
+Dr. Zoh's preliminary code:
+
+```{r}
+#-------------------------------------------------------------------------------
+#--- Useful functions
+#-- find the root
+#-------------------------------------------------------------------------------
+GamF <- function(gam, p0){
+  
+  (2*pnorm(-abs(gam))*exp(.5*gam^2) - p0)^2
+}
+
+#optimize(GamF,interval = c(-30,30), p0=1 - 0.05)
+GamBnd <- function(p0){
+  
+  Re1 <- optimize(GamF, interval = c(-30, 30), p0 = 1-p0)
+  Re2 <- optimize(GamF, interval = c(-30, 30), p0 = p0)
+  
+  c( -abs(Re1$minimum),  abs(Re2$minimum), Re1$objective,Re2$objective)  
+}
+GamBnd <- Vectorize(GamBnd,"p0")
+
+#-------------------------------------------------------------------------------
+#--- Function
+#-------------------------------------------------------------------------------
+#--- Stan function (case 2)
+tau0 = .1
+
+{
+  Bd = GamBnd(tau0)[1:2]
+  #GAL2 <- custom_family(
+  #  "GAL2", dpars = c("mu", "sigma","ligam", "tau","gamL","gamU"), links=c("identity","log","identity","identity", rep("identity",2)), 
+  #  lb=c(NA,0, -1.087,0,NA,NA), ub=c(NA,NA, 1.087,1,NA,NA), type="real") #, vars = "vint1[n]"
+  # GAL2 <- custom_family(
+  #   "GAL2", dpars = c("mu", "sigma","ligam"), links= c("identity","log","identity"), 
+  #   lb=c(NA,0, -1.087), ub=c(NA,NA, 1.087), type="real", vars = c("tau","gamL","gamU")) #, vars = "vint1[n]"
+  GAL2 <- custom_family(
+    "GAL2", dpars = c("mu", "sigma","ligam", "tau"), links= c("identity","log","identity","identity"), 
+    lb=c(NA,0, -1.086,0), ub=c(NA,NA, 1.086,1), type="real") #, vars = c("tau")) #, vars = "vint1[n]"
+  
+  GAL2 <- custom_family(
+    "GAL2", dpars = c("mu", "sigma","ligam", "tau"), links= c("identity","log","logit","identity"), 
+    lb=c(NA,0, -15,0), ub=c(NA,NA, 15,1), type="real", vars=c("gamL", "gamU")) #, vars = c("tau")) #, vars = "vint1[n]"
+  
+  GAL2 <- custom_family(
+    "GAL2", dpars = c("mu", "sigma","ligam", "tau","gamL","gamU"), links=c("identity","log","identity","identity", rep("identity",2)),
+    lb=c(NA,0, -15,0,NA,NA), ub=c(NA,NA, 15,1,NA,NA), type="real") #, vars = "vint1[n]"
+  
+  GAL2 <- custom_family(
+    "GAL2", dpars = c("mu", "sigma","ligam", "tau"), links=c("identity","log","identity","identity"),
+    lb=c(NA,0, Bd[1]*.99,0), ub=c(NA,NA, Bd[2]*.99,1), type="real") #, vars = "vint1[n]"
+  
+  
+  stan_funs2 <- "
+  /*
+  A = -est*p_neg + .5*pow(gam, 2)*pow(p_neg/p_pos, 2) + log(Phi_approx(a2-a3)) + log1m_exp(fabs(log(Phi_approx(a2-a3)) - log(Phi_approx(a2)))); 
+  gam = (gamU - gamL) * ligam + gamL;
+  real gam = (gamU - gamL) * ligam + gamL;
+  real GAL2_lpdf(real y, real mu, real sigma, real ligam, real tau, real gamL, real gamU){
+  real GAL2_rng(real mu, real sigma, real ligam, real tau, real gamL, real gamU){
+   */
+     /* helper function for asym_laplace_lpdf
+  * Args:
+    *   y: the response value
+  *   tau: quantile parameter in (0, 1)
+  */
+    real rho_quantile(real y, real tau) {
+      if (y < 0) {
+        return y * (tau - 1);
+      } else {
+        return y * tau;
+      }
+    }
+  /* asymmetric laplace log-PDF for a single response
+  * Args:
+    *   y: the response value
+  *   mu: location parameter
+  *   sigma: positive scale parameter
+  *   tau: quantile parameter in (0, 1)
+  * Returns:
+    *   a scalar to be added to the log posterior
+  */
+    real asym_laplace_lpdf(real y, real mu, real sigma, real tau) {
+      return log(tau * (1 - tau)) -
+        log(sigma) -
+        rho_quantile((y - mu) / sigma, tau);
+    }
+  /* asymmetric laplace log-CDF for a single quantile
+  * Args:
+    *   y: a quantile
+  *   mu: location parameter
+  *   sigma: positive scale parameter
+  *   tau: quantile parameter in (0, 1)
+  * Returns:
+    *   a scalar to be added to the log posterior
+  */
+    real asym_laplace_lcdf(real y, real mu, real sigma, real tau) {
+      if (y < mu) {
+        return log(tau) + (1 - tau) * (y - mu) / sigma;
+      } else {
+        return log1m((1 - tau) * exp(-tau * (y - mu) / sigma));
+      }
+    }
+  /* asymmetric laplace log-CCDF for a single quantile
+  * Args:
+    *   y: a quantile
+  *   mu: location parameter
+  *   sigma: positive scale parameter
+  *   tau: quantile parameter in (0, 1)
+  * Returns:
+    *   a scalar to be added to the log posterior
+  */
+    real asym_laplace_lccdf(real y, real mu, real sigma, real tau) {
+      if (y < mu) {
+        return log1m(tau * exp((1 - tau) * (y - mu) / sigma));
+      } else {
+        return log1m(tau) - tau * (y - mu) / sigma;
+      }
+    }
+   
+   real GAL2_lpdf(real y, real mu, real sigma, real ligam, real tau){
+   
+   real p_pos;
+   real p_neg;
+   real a3;
+   real a2;
+   real p;
+   real est;
+   real A;
+   real B;
+   real Res = 0;
+   real gam = ligam;
+    p = (gam < 0) + (tau - (gam < 0))/(2*Phi(-fabs(gam))*exp(.5*pow(gam, 2)));
+    p_pos = p -  (gam > 0);
+    p_neg = p -  (gam < 0);  
+    est = (y - mu) / sigma; 
+    
+    if(fabs(gam) > 0){
+    a3 = p_pos * (est / fabs(gam));
+    a2 = fabs(gam) * (p_neg / p_pos);
+    
+    
+    if(est/gam > 0){
+      A =  0.5*pow(gam, 2)*pow(p_neg/p_pos, 2) - est*p_neg + log_diff_exp(log(Phi_approx(a2-a3)), log(Phi_approx(a2)) ); 
+      B =  0.5*pow(gam, 2) - p_pos*est + log(Phi_approx(-fabs(gam) + a3));
+      Res = log(2*p*(1-p)) - log(sigma) +  log_sum_exp(A, B);
+    }else{
+      Res =  log(2*p*(1-p)) - log(sigma) - p_pos * est + 0.5 * pow(gam, 2) + log(Phi_approx(-fabs(gam) ));
+    }
+    }else{
+    Res = asym_laplace_lpdf( y | mu, sigma, tau); 
+    }
+     
+    return Res;
+   }
+  
+  real GAL2_rng(real mu, real sigma, real ligam, real tau){
+  
+     real A;
+     real B;
+     real C;
+     real p;
+     real hi;
+     real nui;
+     real mui=0;
+     real Up = uniform_rng(.5, 1.0);
+     
+     real gam = ligam;
+     p = (gam < 0) + (tau - (gam < 0))/(2*Phi_approx(-fabs(gam))*exp(.5*pow(gam, 2)));
+     A = (1 - 2*p)/(p - pow(p,2));
+     B = 2/(p - pow(p,2));
+     C = 1/((gam > 0) - p);
+     
+      hi = sigma * inv_Phi(Up);
+     nui = sigma * exponential_rng(1);
+     mui += mu + A * nui + C * fabs(gam) * hi;
+  
+     return normal_rng(mui, sqrt(sigma*B*nui));
+  }
+  "
+}  
+
+#--- Now define all of these here
+# stanvars <- stanvar(scode = stan_funs, block = "functions")
+stanvars2 <- stanvar(scode = stan_funs2, block = "functions")
+
+# priorval = c(prior(normal(0, 15), class = "Intercept"),
+#           # Prior guess of 80% of the terms are non-zero
+#           prior(horseshoe(par_ratio =0.8), class = "b"))
+
+#--- Fit the quantile regression
+#-- quantile
+
+#fit_fakeq.5 <- brms::brm(bf(as.formula(form), quantile = .5), data = df_sampleWt, family = asym_laplace(), prior = set_prior(horseshoe(df=1,par_ratio = 0.1), class="b"))
+#fit_fakeq.5 <- brms::brm(bf(as.formula(form), quantile = .5), data = df_sampleWt, family = asym_laplace())
+
+# fit_fakeqGal.5 <- brms::brm(bf(as.formula(form), tau = .5, gamL = Bd[1], gamU = Bd[2]), data = df_sampleWt, family = GAL, 
+#                             stanvars = stanvars,chains = 3,iter = 10000, control = list(adapt_delta = 0.97, max_treedepth = 10))
+
+
+#fit_fakeqGal2.5 <- brms::brm(bf(as.formula(form), tau = .5, gamL = Bd[1], gamU = Bd[2]), data = df_sampleWt, family = GAL2, stanvars = stanvars2,chains = 3,iter = 1000)
+#fit_fakeqGal2.5 <- brms::brm(bf(as.formula(form), tau = .5,gamL = Bd[1], gamU = Bd[2]), data = df_sampleWt, family = GAL2, stanvars = stanvars2,chains = 2,iter = 2000, init = 0.1, control = list(adapt_delta = 0.97))
+
+#fit_fakeqGal2.5 <- brms::brm(bf(as.formula(form), tau = tau0), data = df_sampleWt, family = GAL2, stanvars = stanvars2,chains = 2,iter = 5000, control = list(adapt_delta = 0.97)) # init = 0.1,
+#fit_fakeqGal2.9 <- brms::brm(bf(as.formula(form), tau = tau0), data = df_sampleWt, family = GAL2, stanvars = stanvars2,chains = 2,iter = 5000, control = list(adapt_delta = 0.97)) # init = 0.1,
+# fit_fakeqGal2.1 <- brms::brm(bf(as.formula(form), tau = tau0), data = df_sampleWt, family = GAL2, stanvars = stanvars2,chains = 2,iter = 5000, control = list(adapt_delta = 0.97)) # init = 0.1,
+
+```
+
+
+## Homoskedastic, normally distributed data with sinusoidal behavior
+
+Data generation:
+
+```{r}
+N <- 100
+# mean number of data points per value of x sampled
+mean_obs <- 30
+# true value of beta, as in mu_i = beta * x_i
+beta_mean <- 1
+# multiplier for heteroskedasticity
+hetero_fact <- 1
+
+
+# simulation procedure
+x <- c()
+y <- c()
+for (i in 1:N) {
+    # generate x value
+    x_i <- runif(n = 1, 0, pi)
+    # generate how many samples will have that x value
+    n_i <- rpois(n = 1, lambda = mean_obs)
+    if (n_i > 0) {
+        # generate the y values of each data point
+        y_i <- rnorm(
+            n = n_i, mean = sin(x_i),
+            sd = .1
+            # sd = .1
+        )
+        # append them to data
+        for (j in 1:n_i) {
+            x <- append(x, x_i)
+            y <- append(y, y_i[j])
+        }
+    }
+}
+
+simulated_data <- data.frame(x = x, y = y)
+```
+
+plotting 
+
+```{r}
+plot(x,y)
+```
+
+
+Fitting the model
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+fit_fakeqGal2.1 <- brms::brm(bf(as.formula("y ~ s(x)"), tau = tau0), data = simulated_data, family = GAL2, stanvars = stanvars2,chains = 1, control = list(adapt_delta = 0.97), cores = 4) # init = 0.1,
+```
+
+Summary:
+
+```{r}
+
+summary(fit_fakeqGal2.1)
+
+
+#brms::conditional_smooths(fit_fakeqGal2.5)
+#brms::conditional_smooths(fit_fakeqGal2.9)
+# brms::conditional_smooths(fit_fakeqGal2.1)
+
+```
+
+
+I don't know much about non-parametric models, specifically GAM. But I found online the following description of how `brms` fits `s` [fitting gams with brms](https://fromthebottomoftheheap.net/2018/04/21/fitting-gams-with-brms/): 
+
+> "because the smooths in the model are going to be treated as random effects and the model is estimated as a GLMM, which exploits the duality of splines as random effects. In this representation, the wiggly parts of the spline basis are treated as a random effect and their associated variance parameter controls the degree of wiggliness of the fitted spline. The perfectly smooth parts of the basis are treated as a fixed effect. In this form, the GAM can be estimated using standard GLMM software"
+
+Because of that, we can recover the fitted gam as follows:
+
+```{r}
+msms <- conditional_smooths(fit_fakeqGal2.1)
+plot(msms)
+```
+
+Pretty good fit. 
+
+Stan code:
+
+```{r}
+stancode(fit_fakeqGal2.1)
+```
+
+The Stan code does not tell you the whole story about the basis functions. 
+Specifically, the design matrix is probably generated behind the scenes. 
+Which makes sense, I don't think Stan has splines capabilities. 
+
+Update: I got it from [here](https://discourse.mc-stan.org/t/speed-up-for-gams/11203/13) that 
+> "brms uses mgcv::smoothCon() to set up the basis for each s()"
+
+
+
+### Changing the arguments to the `s` part 
+
+
+Fitting with a different basis:
+```{r}
+fit_fakeqGal2.1 <- brms::brm(bf(as.formula("y ~ s(x, bs = 'cr')"), tau = tau0), data = simulated_data, family = GAL2, stanvars = stanvars2, chains = 1, control = list(adapt_delta = 0.97), cores = 4) 
+```
+
+Trying to get more information from the `conditional_smooths` object 
+```{r}
+summary(conditional_smooths(fit_fakeqGal2.1))
+```
+
+Just plotting 
+
+```{r}
+plot(conditional_smooths(fit_fakeqGal2.1))
+```
+
+Getting the stan code
+
+```{r}
+stancode(fit_fakeqGal2.1)
+```
+
+Didn't notice any difference in the Stan code
+
+
+## Fixing the intercept problem in fitting $\sigma$ 
+
+Generating heteroskedastic data
+```{r}
+# simulation procedure
+x <- c()
+y <- c()
+for (i in 1:N) {
+    # generate x value
+    x_i <- runif(n = 1, 0, 1)
+    # generate how many samples will have that x value
+    n_i <- rpois(n = 1, lambda = mean_obs)
+    if (n_i > 0) {
+        # generate the y values of each data point
+        y_i <- rnorm(
+            n = n_i, mean = x_i,
+            sd = x_i
+            # sd = .1
+        )
+        # append them to data
+        for (j in 1:n_i) {
+            x <- append(x, x_i)
+            y <- append(y, y_i[j])
+        }
+    }
+}
+
+simulated_data <- data.frame(x = x, y = y)
+```
+
+Plotting:
+
+```{r}
+plot(x,y)
+```
+
+
+Fitting the model 
+
+```{r}
+fit_fakeqGal2.1 <- brms::brm(bf(y ~ x, sigma ~ log(x) - 1, tau = tau0), data = simulated_data, family = GAL2, stanvars = stanvars2, chains = 2, iter = 2000, control = list(adapt_delta = 0.97), cores = 4) 
+```
+
+```{r}
+summary(fit_fakeqGal2.1)
+```
+
+The coefficient for $\sigma$ is still off. 
+Oh, but actually, we shouldn't expect it to be right. 
+That's because they are two different $\sigma$'s. 
+One is the variance of the data, one is the scale of the GAL distribution.
+
+
+## Fitting a GAM to the $\sigma$ part 
+
+Generating heteroskedastic data with complex pattern
+```{r}
+# simulation procedure
+x <- c()
+y <- c()
+for (i in 1:N) {
+    # generate x value
+    x_i <- runif(n = 1, 0, pi/2)
+    # generate how many samples will have that x value
+    n_i <- rpois(n = 1, lambda = mean_obs)
+    if (n_i > 0) {
+        # generate the y values of each data point
+        y_i <- rnorm(
+            n = n_i, mean = 0,
+            sd = exp(cos(x_i))
+            # sd = .1
+        )
+        # append them to data
+        for (j in 1:n_i) {
+            x <- append(x, x_i)
+            y <- append(y, y_i[j])
+        }
+    }
+}
+
+simulated_data <- data.frame(x = x, y = y)
+```
+
+Plotting:
+
+```{r}
+plot(x,y)
+```
+
+Fitting:
+
+```{r}
+fit_fakeqGal2.1 <- brms::brm(bf(y ~ x, sigma ~ s(x), tau = tau0), data = simulated_data, family = GAL2, stanvars = stanvars2, chains = 2, iter = 2000, control = list(adapt_delta = 0.97), cores = 4) 
+```
+
+
+Plotting the fitted object:
+
+```{r}
+msms <- conditional_smooths(fit_fakeqGal2.1)
+plot(msms)
+```
+
+This is indeed roughly how $cos(x)$ looks in that range. 
+
+For goodness of fit, here's the summary:
+
+```{r}
+summary(fit_fakeqGal2.1)
+```
+
+The values of the intercept and coefficient for $x$ are reasonable. 
+
+Hard to tell how good the fit on $\sigma$ is. For reference, at least, here's the posterior predictive check. 
+
+
+```{r}
+posterior_predict_GAL2 <- function(i, prep, ...){
+  mu <- brms::get_dpar(prep, 'mu', i = i)
+  sigma <- brms::get_dpar(prep, 'sigma', i = i)
+  ligam <- brms::get_dpar(prep, 'ligam', i = i)
+  tau <- brms::get_dpar(prep, 'tau', i = i)
+  GAL2_rng(mu, sigma, ligam, tau)
+}
+expose_functions(fit_fakeqGal2.1, vectorize = TRUE)
+
+library(bayesplot)
+pp_check(fit_fakeqGal2.1)
+```
+
+A little off. 
+
+

@@ -1,0 +1,76 @@
+---
+title: "Progress Report"
+format: 
+    html: 
+        code-fold: true
+---
+
+## Summary of what has been done before week 6
+
+### Working on the book by Fahrmeir et all
+We went through Sections 2.1 and 2.2 of Fahrmeir's book. 
+More specifically, I wrote notes for the material, which can be found [here](https://github.com/nescoba/bfda/tree/main/notes/fahrmeir1). 
+
+I also wrote code to implement basic Bayesian PLS, as well as algorithms 2.1 and 2.2 in section 2.2 of the book. I used Nimble to do that. The code is [here](https://github.com/nescoba/bfda/tree/main/code/textbook_code). 
+
+### Switching to Stan and BRMS
+We decided that BRMS and Stan would suit out project better than Nimble. 
+I went through the Stan user manual as well as the paper that introduced BRMS and wrote [notes](https://github.com/nescoba/bfda/tree/main/notes) for it.
+
+### Bayesian quantile regression
+We then switched attention to this [paper](https://github.com/nescoba/bfda/blob/main/ref/bayesian_qr/paper1.pdf). 
+To test my understanding, I wrote the model described there directly on a Stan [script](https://github.com/nescoba/bfda/blob/main/code/bayesian_quantile_regression/fbqror_test/stanCode.stan). 
+I then compiled it and called it using `rstan` in an R [script](https://github.com/nescoba/bfda/blob/main/code/bayesian_quantile_regression/fbqror_test/rscript.r). 
+
+Though this was very illustrative, writing Stan code is challenging. 
+So we started working with BRMS. 
+I went through the [paper](https://github.com/nescoba/bfda/blob/main/ref/brms/brmsJStatSoftware.pdf) that introduced it.
+
+Dr. Zoh shared with me [this](https://github.com/rszoh/BQSoFR) repository. 
+Among other things, it has an implementation of the GAL distribution in Stan, which is then used in BRMS. 
+I forked it in [this](https://github.com/nescoba/BQSoFR) repository. 
+Additionally, I created a branch called `experimenting`. 
+
+I played around with Dr. Zoh's implementation of the GAL distribution. 
+I generated normally distributed data and found the quantile in this [script](https://github.com/nescoba/BQSoFR/blob/experimenting/Brm_try.R). 
+A big question I had was about the ability of this model to fit heteroskedastic data. 
+
+Dr Zoh requested me to look into posterior predictive checks using BRMS. 
+This has a couple of complications. 
+Namely, since we're using a custom family, we need to expose the Stan code to R. 
+Secondly, the simulated data I generated has a distribution that depends on `x`, 
+hence different posterior draws should be drawn at different values of that variable. 
+A quarto document with the code to do both things is [here](https://github.com/nescoba/BQSoFR/blob/experimenting/posterior_predictive.qmd). 
+
+At this point, we wanted to explore the BRMS capabilities around fitting splines. 
+I wrote code that generated normally distributed data with a mean that varies smoothly. 
+Then I performed quantile regression, using the default basis as well as the `cr` argument. 
+For both cases, I looked at the Stan code generated. 
+Unfortunately, BRMS just calls `mgcv` and we cannot see the difference in the Stan code. 
+I also looked at fitting GAMS to the scale parameter. 
+Although it seemed to fit, Dr. Zoh assesed that this is not a fruitful avenue of research. 
+Lastly, I perfomed posterior predictive checks on all previous models. 
+The code can be found [here](https://github.com/nescoba/BQSoFR/blob/experimenting/02062023.qmd). 
+
+## Week 6 
+
+First try at fitting a mixture of GALs in [this](https://github.com/nescoba/BQSoFR/blob/experimenting/fitting_mixture_gals.qmd).
+There are some clear convergence issues. 
+Dr. Zoh points out that priors should not be set on $\mu$, but rather on $\sigma$ and $\gamma$. 
+
+Discussed progress document, which Dr. Zoh will also edit. 
+
+Read about the [Dirichlet process](https://github.com/nescoba/bfda/blob/main/ref/bayesian_qr/2019-YuelinA%20tutorial%20on%20Dirichlet%20Process%20mixture%20modeling.pdf) 
+and a Dirichlet's process [mixture of GALs](https://github.com/nescoba/bfda/blob/main/ref/bayesian_qr/Can%20J%20Statistics%20-%202020%20-%20Kobayashi%20-%20Flexible%20Bayesian%20quantile%20curve%20fitting%20with%20shape%20restrictions%20under%20the%20Dirichlet.pdf)
+
+## Week 7 
+
+Major goal of the week was to get rid of the divergence issues when fitting GAL distributions with heteroskedasticity. 
+Despite multiple attempts, when heteroskedasticity grows linearly or quadratically, the sampling continues to experience divergence issues. 
+I tried reparemtrizing the scale parameter, and multiple combinations of telling the model not to fit $\lambda$, telling it to fit smooth functions for $\lambda$, etc. 
+In all cases, the pairs plots show degeneracy.
+Trace plots generally show that $\lambda$ is not being learned.
+
+The problem seems to mostly dissapear when the heteroskedasticity grows exponentially. 
+There are still significant divergences when considering the median,
+but for the other quantiles the sampling seems to work.

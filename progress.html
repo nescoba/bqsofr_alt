@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Progress Report</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="progress_files/libs/clipboard/clipboard.min.js"></script>
+<script src="progress_files/libs/quarto-html/quarto.js"></script>
+<script src="progress_files/libs/quarto-html/popper.min.js"></script>
+<script src="progress_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="progress_files/libs/quarto-html/anchor.min.js"></script>
+<link href="progress_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="progress_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="progress_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="progress_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="progress_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Progress Report</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="summary-of-what-has-been-done-before-week-6" class="level2">
+<h2 class="anchored" data-anchor-id="summary-of-what-has-been-done-before-week-6">Summary of what has been done before week 6</h2>
+<section id="working-on-the-book-by-fahrmeir-et-all" class="level3">
+<h3 class="anchored" data-anchor-id="working-on-the-book-by-fahrmeir-et-all">Working on the book by Fahrmeir et all</h3>
+<p>We went through Sections 2.1 and 2.2 of Fahrmeir’s book. More specifically, I wrote notes for the material, which can be found <a href="https://github.com/nescoba/bfda/tree/main/notes/fahrmeir1">here</a>.</p>
+<p>I also wrote code to implement basic Bayesian PLS, as well as algorithms 2.1 and 2.2 in section 2.2 of the book. I used Nimble to do that. The code is <a href="https://github.com/nescoba/bfda/tree/main/code/textbook_code">here</a>.</p>
+</section>
+<section id="switching-to-stan-and-brms" class="level3">
+<h3 class="anchored" data-anchor-id="switching-to-stan-and-brms">Switching to Stan and BRMS</h3>
+<p>We decided that BRMS and Stan would suit out project better than Nimble. I went through the Stan user manual as well as the paper that introduced BRMS and wrote <a href="https://github.com/nescoba/bfda/tree/main/notes">notes</a> for it.</p>
+</section>
+<section id="bayesian-quantile-regression" class="level3">
+<h3 class="anchored" data-anchor-id="bayesian-quantile-regression">Bayesian quantile regression</h3>
+<p>We then switched attention to this <a href="https://github.com/nescoba/bfda/blob/main/ref/bayesian_qr/paper1.pdf">paper</a>. To test my understanding, I wrote the model described there directly on a Stan <a href="https://github.com/nescoba/bfda/blob/main/code/bayesian_quantile_regression/fbqror_test/stanCode.stan">script</a>. I then compiled it and called it using <code>rstan</code> in an R <a href="https://github.com/nescoba/bfda/blob/main/code/bayesian_quantile_regression/fbqror_test/rscript.r">script</a>.</p>
+<p>Though this was very illustrative, writing Stan code is challenging. So we started working with BRMS. I went through the <a href="https://github.com/nescoba/bfda/blob/main/ref/brms/brmsJStatSoftware.pdf">paper</a> that introduced it.</p>
+<p>Dr.&nbsp;Zoh shared with me <a href="https://github.com/rszoh/BQSoFR">this</a> repository. Among other things, it has an implementation of the GAL distribution in Stan, which is then used in BRMS. I forked it in <a href="https://github.com/nescoba/BQSoFR">this</a> repository. Additionally, I created a branch called <code>experimenting</code>.</p>
+<p>I played around with Dr.&nbsp;Zoh’s implementation of the GAL distribution. I generated normally distributed data and found the quantile in this <a href="https://github.com/nescoba/BQSoFR/blob/experimenting/Brm_try.R">script</a>. A big question I had was about the ability of this model to fit heteroskedastic data.</p>
+<p>Dr Zoh requested me to look into posterior predictive checks using BRMS. This has a couple of complications. Namely, since we’re using a custom family, we need to expose the Stan code to R. Secondly, the simulated data I generated has a distribution that depends on <code>x</code>, hence different posterior draws should be drawn at different values of that variable. A quarto document with the code to do both things is <a href="https://github.com/nescoba/BQSoFR/blob/experimenting/posterior_predictive.qmd">here</a>.</p>
+<p>At this point, we wanted to explore the BRMS capabilities around fitting splines. I wrote code that generated normally distributed data with a mean that varies smoothly. Then I performed quantile regression, using the default basis as well as the <code>cr</code> argument. For both cases, I looked at the Stan code generated. Unfortunately, BRMS just calls <code>mgcv</code> and we cannot see the difference in the Stan code. I also looked at fitting GAMS to the scale parameter. Although it seemed to fit, Dr.&nbsp;Zoh assesed that this is not a fruitful avenue of research. Lastly, I perfomed posterior predictive checks on all previous models. The code can be found <a href="https://github.com/nescoba/BQSoFR/blob/experimenting/02062023.qmd">here</a>.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

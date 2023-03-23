@@ -1,0 +1,80 @@
+---
+title: "plots_for_presentation"
+format: html
+editor: visual
+---
+
+## plots for presentation 
+
+```{r}
+data_1_1 <- c()
+data_1_2 <- c()
+data_1_3 <- c()
+data_1_4 <- c()
+data_2_1 <- c()
+data_2_2 <- c()
+data_2_3 <- c()
+data_2_4 <- c()
+data_3_1 <- c()
+data_3_2 <- c()
+data_3_3 <- c()
+data_3_4 <- c()
+for(i in 1:10000){
+  data_1_1 <- append(data_1_1, generate_gal(0,1,0,.1))
+  data_1_2 <- append(data_1_2, generate_gal(0,1,-0.1,.1))
+  data_1_3 <- append(data_1_3, generate_gal(0,1,3,.1))
+  data_1_4 <- append(data_1_4, generate_gal(0,1,6,.1))
+  data_2_1 <- append(data_2_1, generate_gal(0,1,0,.5))
+  data_2_2 <- append(data_2_2, generate_gal(0,1,-.7,.5))
+  data_2_3 <- append(data_2_3, generate_gal(0,1,0.5,.5))
+  data_2_4 <- append(data_2_4, generate_gal(0,1,0.9,.5))
+  data_3_1 <- append(data_3_1, generate_gal(0,1,0,.9))
+  data_3_2 <- append(data_3_2, generate_gal(0,1,-6,.9))
+  data_3_3 <- append(data_3_3, generate_gal(0,1,-3,.9))
+  data_3_4 <- append(data_3_4, generate_gal(0,1,0.1,.9))
+}
+```
+
+
+```{r}
+generate_gal<- function(mu, sigma, ligamma, tau){
+  Up <- runif(1, 0.5, 1)
+  gam <- ligamma  
+  p = (gam < 0) + (tau - (gam < 0))/(2*pnorm(-abs(gam))*exp(.5*gam^2))
+     A = (1 - 2*p)/(p - p^2)
+     B = 2/(p - p^2)
+     C = 1/((gam > 0) - p)
+     
+      hi = sigma * qnorm(Up)
+     nui = sigma * rexp(1)
+     mui = mu + A * nui + C * abs(gam) * hi
+     return( rnorm(1, mean = mui, sd = sqrt(sigma*B*nui)))
+}
+generate_gal(0,1,1,.5)
+```
+
+
+
+```{r}
+plot(density(data_1_1), col = "black", main = "p_0 = 0.1", ylim = c(0, 0.11), xlim = c(-20, 20), lwd = 2.0)
+lines(density(data_1_2), col = "blue", lwd = 2.0)
+lines(density(data_1_3), col = "red", lwd = 2.0)
+lines(density(data_1_4), col = "green", lwd = 2.0)
+legend('topright', c("gamma = 0", "gamma = -0.1", "gamma = 3", "gamma = 6"),col = c("black", "blue", "red", "green"), pch = c(20))
+```
+
+```{r}
+plot(density(data_2_1), col = "black", main = "p_0 = 0.5", ylim = c(0, 0.25), xlim = c(-20, 20), lwd = 2.0)
+lines(density(data_2_2), col = "blue", lwd = 2.0)
+lines(density(data_2_3), col = "red", lwd = 2.0)
+lines(density(data_2_4), col = "green", lwd = 2.0)
+legend('topright', c("gamma = 0", "gamma = -0.7", "gamma = 0.5", "gamma = 0.9"),col = c("black", "blue", "red", "green"), pch = c(20))
+```
+
+```{r}
+plot(density(data_3_1), col = "black", main = "p_0 = 0.9", ylim = c(0, 0.1), xlim = c(-20, 20), lwd = 2.0)
+lines(density(data_3_2), col = "blue", lwd = 2.0)
+lines(density(data_3_3), col = "red", lwd = 2.0)
+lines(density(data_3_4), col = "green", lwd = 2.0)
+legend('topleft', c("gamma = 0", "gamma = -6", "gamma = -3", "gamma = 0.1"),col = c("black", "blue", "red", "green"), pch = c(20))
+```

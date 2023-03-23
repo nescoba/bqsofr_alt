@@ -1,0 +1,15 @@
+Y ~1 distr N {mu,sigma} 
+Y ~2 distr Exp lbd 
+
+what's the pdf of Y ~1 + Y ~2?
+
+better yet 
+
+Y ~1 distr Pois {lbd ~1}  
+Y ~2 distr Pois {lbd ~2}
+
+Y = Y ~1 + Y ~2 
+
+Pr {Y = y}
+= Pr {Y ~1 + Y~2 = y}
+= $ ~{y~2, 0, infty} Pr {Y ~1 + y ~2 = y} * Pr {Y ~2 = y ~2}

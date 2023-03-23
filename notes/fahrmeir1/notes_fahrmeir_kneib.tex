@@ -1,0 +1,170 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+
+\newcommand{\Bern}{\operatorname{Bern}}
+\newcommand{\bu}{\mathbf u}
+\newcommand{\bbeta}{\boldsymbol \beta}
+\newcommand{\bgamma}{\boldsymbol \gamma}
+\newcommand{\bK}{\mathbf K}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\PLS}{\operatorname{PLS}}
+\DeclareMathOperator*{\IG}{\operatorname{IG}}
+\DeclareMathOperator*{\rank}{\operatorname{rank}}
+
+\begin{document}
+    \section{chapter 2}
+    \subsection{time series}
+    \subsubsection{PLS}
+    The basic model is
+    \[y_t = \gamma_t + \epsilon_t \]
+    where \(\gamma\) is the trend and \(\epsilon\) are the zero-centered errors 
+    
+    We estimate \(\gamma\) by minimizing 
+    \[\operatorname{PLS} (\gamma) = \sum_{i =1}^T (y_t - \gamma_t)^2 + \lambda \sum_{i = 3}^T (\Delta \gamma)^2 \]
+
+    If we write 
+    \[\mathbf D = \left(\begin{matrix}
+        -1 & 1 & & & \\
+        & -1 & 1 & & \\
+        &&\cdots&& \\
+        &&& -1 & 1 
+    \end{matrix}\right)\]
+
+    Then 
+    \[\operatorname{pen} = \boldsymbol \gamma ' \mathbf D ' \mathbf D \boldsymbol \gamma = \boldsymbol \gamma ' \mathbf K \boldsymbol \gamma\]
+
+    The usual manipulations give 
+    \[\hat \gamma_{\text{PLS}} = (\mathbf I + \lambda \mathbf K)^{-1} \mathbf y\]
+
+    In turn, this gives 
+    \begin{align*}
+        E[\hat \gamma_{\text{PLS}}] &= (\mathbf I + \lambda \mathbf K)^{-1} \boldsymbol \gamma \\
+        \text{Cov}[\hat \gamma_{\text{PLS}}] &= \sigma^2 (\mathbf I+ \lambda \mathbf K)^{-2}
+    \end{align*}
+
+    If the errors are assumed Gaussian, so is \(\hat \gamma_{\text{PLS}}\)
+
+    \subsubsection{Bayesian}
+    
+    The sampling distribution is 
+    \[ \mathbf y | \boldsymbol \gamma \sim N(\boldsymbol\gamma, \sigma^2 \mathbf I)\]
+
+    The prior is the solution to the equation 
+    \[\gamma_t - 2 \gamma_{t-1} + \gamma_{t -2} = u_t\]
+    with \(u_t \sim N(0, \tau^2)\). But additionally we have to give priors to the initial conditions, for instance 
+    \[ (\gamma_1, \gamma_2)' = N(0, c\mathbf I_2) \]
+    for \(c \rightarrow \infty\), the prior becomes 
+    \[p(\boldsymbol\gamma) \propto \exp \left(-\frac{1}{2\tau^2}\boldsymbol\gamma'\mathbf K \boldsymbol\gamma \right)\]
+    In words, the penalty term is the negative log-prior
+    
+    It turns out we have conjugacy, so the posterior is also normal. 
+    It's easy to derive that \(\hat \gamma_{\text{PLS}}\) is identical to the posterior mean:
+    \[E(\boldsymbol\gamma|\mathbf y) = (\mathbf I + \lambda \mathbf K)^{-1} \mathbf y \]
+    we also can obtain 
+    \[\text{Cov}(\boldsymbol \gamma|\mathbf y) = \sigma^2 (\mathbf I + \lambda\mathbf K)^{-1}\]
+    
+    The results hold for any \(\mathbf K\). That is, it doesn't matter the order at which you penalize. 
+
+    \subsubsection{Modifications and extensinons}
+
+    What if you don't know \(\sigma\) and \(\tau\)? Either you treat them as parameters and you estimate them as any other (FB) or you use some frequentist technique like MLE (EB).
+
+    The model can be extended easily in two ways:
+    \[ y_t  = \gamma_t + \xi_t + \epsilon_t \] 
+    where \(\eta_t\) is a seasonal component. The prior for that is given by an autoregresive series with \(per\) many terms. This also turns out to be Gaussian, with an appropriate penalty matrix. 
+
+    Additional covariates can also be included:
+    \[y_t = \gamma_t + \xi_t + \mathbf x ' \boldsymbol\beta + \mathbf z ' \boldsymbol\alpha_t + \epsilon_t\]
+
+    The assumption of independent errors is questionable, so we can always model soomething like 
+    \[\epsilon_t = \phi \epsilon_{t -1} + v_t\]
+    where \(v_t \sim N(0, \sigma^2)\) and \(|\phi| < 1\).
+
+    If the trend is not smooth, we change the formulation of the prior for \(\gamma_t\):
+    \[\gamma_t = 2\gamma_{t -1 }+\gamma_t +u_t\]
+    We have two options here. Either we make \(u_t|\omega_t \sim N(0, \tau^2/\omega_t)\) where \(\omega_t\sim \chi^2_\nu\). Or we write \(\tau = \tau_t\) and give it some stochastic process characteristics. 
+    
+    If the time intervals differ in length, we basically just reweight. 
+
+    \subsubsection{Non-Gaussian observation models}
+
+    What if the observations are binary or binomial or counts?
+
+    If it is binary, we write 
+    \[ \gamma_t = \log \left(\frac{\pi_t}{1 - \pi_t}\right)\] 
+    and then 
+    \[\boldsymbol\gamma_{pen} = \argmax_{\boldsymbol\gamma} l_{pen}(\boldsymbol\gamma)\]
+    where 
+    \[l_{pen}(\boldsymbol\gamma) = l(\boldsymbol\gamma) - \frac{\lambda}{2} \boldsymbol\gamma'\mathbf K \boldsymbol\gamma\] 
+    \(l(\boldsymbol\gamma)\) is the log-likelihood of the binomial observations and \(\mathbf K\) is the corresponding penalty matrix. 
+    
+    We can proceed similarly for other distributions, obtained the so-called dynamic generalized linear models. 
+
+    For a Bayesian formulation, we proceed in the same way as for the Gaussian models. We obtain the same correspondence between the penalized smoother and the posterior mode. But this cannot be computed exactly, we have to do numerical algorithms. 
+
+    \subsection{Semiparametric regression based on penalized splines}
+
+    One problem with the models in the previous subsection is their high dimensionality, which makes them computationally expensive. 
+
+    \subsubsection{Gaussian observations}
+
+    \paragraph{B-Splines}
+    Iterative definition of B-splines. Properties: local basis, unity decomposition and bounded range. 
+
+    \paragraph{Regression}
+
+    The scatterplot smoothing problem becomes the linear problem 
+    \[\mathbf y = \mathbf X \boldsymbol\gamma + \boldsymbol\epsilon\]
+    where 
+    \[\mathbf X = \left(\begin{matrix}
+        B_1(x_1) & \cdots & B_K(x_1) \\ 
+        \vdots &&\vdots \\
+        B_1(x_n) & \cdots & B_K(x_n) 
+    \end{matrix}\right)\]
+    The solution is just the OLS solution. 
+
+    \paragraph{P-splines} 
+
+    Just as we did before, we can penalize the coefficients to obtain the criterium 
+    \[\PLS = (\mathbf y  - \mathbf X \boldsymbol \gamma)'(\mathbf y  - \mathbf X \boldsymbol \gamma) + \lambda \boldsymbol \gamma' \mathbf K \boldsymbol \gamma \]
+    For TPS, \(\mathbf K\) penalizes the coefficients associated with the local polynomials. For B-splines, it penalizes it's just as in the previous section. 
+
+    An exact solution for \(\hat {\boldsymbol \gamma}\) can be found by the usual methods. 
+
+    If the knots are not evenly spaces, you have to weight just as in the previoius section. 
+
+    For B-splines, when \(\lambda \rightarrow \infty\), the function estimate approaches a \((d - 1)\)-th order polynomial on \(x\), provided that the degree of the spline is larger or equal to the order of the difference penalty. 
+
+    \paragraph{Bayesian P-splines} 
+
+    Similar results as before.
+
+    For TPS, the penalty described above is equivalent to non-informative priors on the coefficients associated to the global polynomials and Gaussian priors on the ones associated to the local ones. Once again, the PLS criterium and the posterior mode coincide. An exact expression can be found for the posterior of \(\boldsymbol \gamma\).
+
+    For B-splines, the prior is formlated by an autoregresive process. We can choose either a first or second order random walk. The joint prior ends up being partially improper, with 
+    \[p(\boldsymbol\gamma) = \left(\frac{1}{\tau^2}\right)^{\rank(\mathbf K)/2}\exp\left(-\frac{1}{2\tau^2} \boldsymbol \gamma' \mathbf K \boldsymbol\gamma \right)\]
+    where \(\mathbf K\) is the differences one. 
+
+    A little more can be said about the first order one. The sequential conditional is 
+    \[\gamma_k | \gamma_{k-1}, \ldots , \gamma_1 \sim N(\gamma_{k-1}, \tau^2)\]
+    which allows one to make statements about the behavior of the estimate when \(\tau^2\) aquires extreme values. Also, 
+    \[\gamma_{k}|\boldsymbol\gamma_{-k} \sim N\left(\frac{1}{2}(\gamma_{k-1} + \gamma_{k+1}), \frac{\tau^2}{2}\right)\] 
+    (excluding the coefficients at the boundary)
+
+    \paragraph{Bayesian inference}
+
+    We actually don't know \(\sigma^2\) or \(\tau^2\), so we have to include them among the parameters to estimate. In FB, we use MCMC. The priors are \(\IG(a_\sigma, b_\sigma)\) and \(\IG(a,b)\). We obtain conditional conjugacy and therefore a Gibbs sampler can be implemented.
+
+
+
+
+    
+
+
+
+
+    
+\end{document}
